@@ -1,0 +1,7 @@
+apiVersion: v2
+name: system-upgrade-controller
+version: 0.1.0
+dependencies:
+  - name: system-upgrade-controller
+    version: 106.0.0
+    repository: https://charts.rancher.io

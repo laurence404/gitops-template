@@ -1,0 +1,19 @@
+# Configuration options: https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/README.md
+global:
+  networkPolicy:
+    create: true
+argo-cd:
+  configs:
+    params:
+      server.insecure: true
+# We don't use the argo-cd subchart to create Ingress resources
+# as we can't pass through the domain helm variable. Instead we
+# create our own in templates/ingress.yaml
+# Alternatively you could hardcode your domain as below:
+#  server:
+#    ingress:
+#      enabled: true
+#      extraHosts:
+#        - name: argocd.local.yourdomain.com
+#  global:
+#    domain: argocd.yourdomain.com

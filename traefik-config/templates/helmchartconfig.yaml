@@ -1,0 +1,60 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  # See https://github.com/traefik/traefik-helm-chart/blob/master/traefik/values.yaml
+  valuesContent: |-
+    # Enable the GatewayAPI provider
+    providers:
+      kubernetesGateway:
+        enabled: true
+    # Allow the Gateway to expose HTTPRoute from all namespaces
+    # and use *.local certificate provisioned by cert-manager
+    gateway:
+      listeners:
+        web:
+          namespacePolicy: All
+        websecure:
+          port: 8443
+          protocol: HTTPS
+          namespacePolicy: All
+          certificateRefs:
+            - name: wildcard-local-tls
+    # Configure Ingress with *.local certificate provisioned by cert-manager
+    tlsStore:
+      default:
+        defaultCertificate:
+          secretName: wildcard-local-tls
+    # Preserve source IP of client in logs and headers
+    service:
+      spec:
+        externalTrafficPolicy: Local
+    # Enabling logging of Cloudflare headers
+    logs:
+      access:
+        enabled: true
+        format: json
+        fields:
+          general:
+            defaultmode: drop
+            names:
+              ClientHost: keep
+              DownstreamStatus: keep
+              DownstreamContentSize: keep
+              RequestMethod: keep
+              RequestPath: keep
+              RequestHost: keep
+              time: keep
+          headers:
+            defaultmode: drop
+            names:
+              Cf-Access-Authenticated-User-Email: keep
+              cf-cert-subject-dn: keep
+              User-Agent: keep
+    # Trust x-forwarded headers from cloudflared
+    ports:
+      web:
+        forwardedHeaders:
+          trustedIPs: [ "10.0.0.0/8" ]

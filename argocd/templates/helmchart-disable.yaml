@@ -1,0 +1,11 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: argocd
+  namespace: kube-system
+  annotations:
+    helmcharts.helm.cattle.io/unmanaged: "true"
+spec:
+  chart: argo-cd
+  repo: https://argoproj.github.io/argo-helm
+  targetNamespace: argocd

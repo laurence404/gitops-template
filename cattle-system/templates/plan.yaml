@@ -1,0 +1,43 @@
+{{- if .Values.version }}
+apiVersion: upgrade.cattle.io/v1
+kind: Plan
+metadata:
+  name: os-upgrade
+spec:
+  concurrency: 1
+  cordon: false
+  drain:
+    disableEviction: true
+    force: false
+  nodeSelector:
+    matchExpressions:
+      - key: kubernetes.io/hostname
+        operator: Exists
+  serviceAccountName: system-upgrade-controller
+  upgrade:
+    command:
+      - /usr/sbin/suc-upgrade
+    image: quay.io/kairos/{{ .Values.flavor }}
+  version: {{ .Values.version }}
+---
+{{- end }}
+{{- if .Values.recovery_version }}
+apiVersion: upgrade.cattle.io/v1
+kind: Plan
+metadata:
+  name: os-upgrade-recovery
+spec:
+  concurrency: 1
+  cordon: false
+  nodeSelector:
+    matchExpressions:
+      - key: kubernetes.io/hostname
+        operator: Exists
+  serviceAccountName: system-upgrade-controller
+  upgrade:
+    command:
+      - /usr/sbin/suc-upgrade
+      - --recovery
+    image: quay.io/kairos/{{ .Values.flavor }}
+  version: {{ .Values.recovery_version }}
+{{- end }}
