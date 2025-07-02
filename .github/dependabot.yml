@@ -1,0 +1,27 @@
+version: 2
+
+registries:
+  dockerhub:
+    type: docker-registry
+    url: registry.hub.docker.com
+    username: ${{secrets.DOCKERHUB_USERNAME}}
+    password: ${{secrets.DOCKERHUB_PAT}}
+
+updates:
+ - package-ecosystem: docker
+   directories:
+     - /*/templates
+     - /*
+   registries:
+     - dockerhub
+   schedule:
+     interval: daily
+   commit-message:
+     prefix: "chore(docker)"
+ - package-ecosystem: helm
+   directories: 
+     - /*
+   schedule:
+     interval: daily
+   commit-message:
+     prefix: "chore(helm)"
