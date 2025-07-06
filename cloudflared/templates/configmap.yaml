@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflared
+data:
+  config.yaml: |
+    # Name of the tunnel you want to run
+    tunnel: kubernetes
+    # Serves the metrics server under /metrics and the readiness server under /ready
+    metrics: 0.0.0.0:2000
+    # Autoupdates applied in a k8s pod will be lost when the pod is removed or restarted, so
+    # autoupdate doesn't make sense in Kubernetes. However, outside of Kubernetes, we strongly
+    # recommend using autoupdate.
+    no-autoupdate: true
+    # The `ingress` block tells cloudflared which local service to route incoming
+    # requests to. For more about ingress rules, see
+    # https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/do-more-with-tunnels/local-management/configuration-file/
+    ingress:
+    - hostname: hello.{{ .Values.domain }}
+      service: hello_world
+    - hostname: argocd.{{ .Values.domain }}
+      path: ^/api/webhook$
+      service: http://traefik.traefik.svc:80
+    - hostname: argocd-applicationset.{{ .Values.domain }}
+      path: ^/api/webhook$
+      service: http://traefik.traefik.svc:80
+    - hostname: bastion.{{ .Values.domain }}
+      service: bastion
+      originRequest:
+        access:
+          required: true
+          teamName: {{ .Values.teamName | quote }}
+          audTag:
+            - {{ .Values.aud | quote }}
+    # Catch-all rule for anything not matched above - send to Ingress controller which will match on hostname
+    - service: http://traefik.traefik.svc:80
+      originRequest:
+        access:
+          required: true
+          teamName: {{ .Values.teamName | quote }}
+          audTag:
+            - {{ .Values.aud | quote }}
