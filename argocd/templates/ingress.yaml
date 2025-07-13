@@ -4,16 +4,7 @@ metadata:
   name: argocd-server
 spec:
   rules:
-    - host: argocd.{{ .Values.domain }}
-      http:
-        paths:
-          - backend:
-              service:
-                name: argocd-server
-                port:
-                  number: 80
-            path: /
-            pathType: Prefix
+    # argocd.{{ .Values.domain }} is handled directly by cloudflared
     - host: argocd.local.{{ .Values.domain }}
       http:
         paths:

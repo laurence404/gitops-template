@@ -24,6 +24,15 @@ data:
     - hostname: argocd-applicationset.{{ .Values.domain }}
       path: ^/api/webhook$
       service: http://traefik.traefik.svc:80
+    # Bypass ingress for ArgoCD
+    - hostname: argocd.{{ .Values.domain }}
+      service: http://argocd-server.argocd.svc:80
+      originRequest:
+        access:
+          required: true
+          teamName: {{ .Values.teamName | quote }}
+          audTag:
+            - {{ .Values.aud | quote }}
     - hostname: bastion.{{ .Values.domain }}
       service: bastion
       originRequest:

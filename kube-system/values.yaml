@@ -27,7 +27,6 @@ cilium:
   # If change config, trigger a rollout
   rollOutCiliumPods: true
 
-  # Otherwise ArgoCD has out-of-sync Secret
+  # Otherwise ArgoCD has out-of-sync resources
   hubble:
-    tls:
-      enabled: false
+    enabled: false
