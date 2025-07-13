@@ -22,10 +22,6 @@ traefik:
     default:
       defaultCertificate:
         secretName: wildcard-local-tls
-  # Preserve source IP of client in logs and headers
-  service:
-    spec:
-      externalTrafficPolicy: Local
   # Enabling logging of Cloudflare headers
   logs:
     access:
@@ -51,8 +47,22 @@ traefik:
   # Trust x-forwarded headers from cloudflared and configure hostPort
   ports:
     web:
+      hostPort: 80
       forwardedHeaders:
         trustedIPs: [ "10.0.0.0/8" ]
+    websecure:
+      hostPort: 443
   securityContext:
     seccompProfile:
-      type: RuntimeDefault 
+      type: RuntimeDefault
+  # Don't use LoadBalancer as using hostPort, use a ClusterIP accessible to cloudflared
+  service:
+    type: ClusterIP
+  # Run 1 traefik pod on each node using DaemonSet
+  # due to hostPort must remove the old old before deploying new
+  deployment:
+    kind: DaemonSet
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
