@@ -55,6 +55,9 @@ traefik:
   securityContext:
     seccompProfile:
       type: RuntimeDefault
+  # Don't use LoadBalancer as using hostPort, use a ClusterIP accessible to cloudflared
+  service:
+    type: ClusterIP
   # Run 1 traefik pod on each node using DaemonSet
   # due to hostPort must remove the old old before deploying new
   deployment:

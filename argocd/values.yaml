@@ -6,6 +6,15 @@ argo-cd:
   configs:
     params:
       server.insecure: true
+    cm:
+      # Ingress resources using traefik using hostPort will never be healthy without this
+      # github.com/argoproj/argo-cd/issues/1704
+      resource.customizations: |
+        networking.k8s.io/Ingress:
+          health.lua: |
+            hs = {}
+            hs.status = "Healthy"
+            return hs
 # We don't use the argo-cd subchart to create Ingress resources
 # as we can't pass through the domain helm variable. Instead we
 # create our own in templates/ingress.yaml
