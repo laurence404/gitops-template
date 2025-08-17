@@ -8,11 +8,13 @@ traefik:
   gateway:
     listeners:
       web:
-        namespacePolicy: All
+        namespacePolicy:
+          from: All
       websecure:
         port: 8443
         protocol: HTTPS
-        namespacePolicy: All
+        namespacePolicy:
+          from: All
         certificateRefs:
           - group: ''
             kind: Secret
