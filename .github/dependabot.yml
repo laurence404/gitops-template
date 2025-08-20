@@ -21,6 +21,9 @@ updates:
  - package-ecosystem: helm
    directories: 
      - /*
+   exclude-paths:
+     # Leave this to docker - see https://github.com/dependabot/dependabot-core/issues/4364
+     - "*/values.yaml"
    schedule:
      interval: daily
    commit-message:
