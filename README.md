@@ -34,7 +34,7 @@ If you remove the app directory without following the above, for safety ArgoCD i
 * argocd - used to deploy apps from this repo
 * cert-manager - used to provision the certificate for access from the local/private network (i.e. `https://*.local.yourdomain.com`)
 * cloudflared - used to expose apps to the public Internet with Cloudflare handling authentication (i.e. `https://*.yourdomain.com`)
+* kube-system - includes Cilium CNI
 * local-path-storage - used to provision PVCs from local storage
-* metallb-system - used to provision Service Loadbalancers
 * traefik - configures Traefik (Ingress controller) to log Cloudflare headers and to use the certificate provisioned by cert-manager
 * whoami - an example app which echos back the request
