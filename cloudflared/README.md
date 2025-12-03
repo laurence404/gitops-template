@@ -8,7 +8,7 @@ Configures `cloudflared` to setup a tunnel to Cloudflare, using Secret `tunnel` 
 
 Example usage for connecting to Kubernetes API (sets up `127.0.0.1:6443` to forward via Cloudflare to `kubernetes.default:443` within your cluster):
 ```
-$ cloudflared access tcp --hostname bastion.yourdomain.com --url 127.0.0.1:6443 --destination kubernetes.default:443
+$ cloudflared access tcp --hostname bastion.yourdomain.com --listener 127.0.0.1:6443 --destination kubernetes.default:443
 # Ensure ~/.kube/config contains server: https://127.0.0.1:6443
 $ kubectl get pods
 ```
