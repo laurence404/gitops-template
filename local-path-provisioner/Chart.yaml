@@ -3,5 +3,5 @@ name: local-path-provisioner
 version: 0.1.0
 dependencies:
   - name: local-path-provisioner
-    version: 0.0.32
+    version: 0.0.33
     repository: oci://ghcr.io/rancher/local-path-provisioner/charts
