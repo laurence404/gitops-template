@@ -25,27 +25,25 @@ traefik:
       defaultCertificate:
         secretName: wildcard-local-tls
   # Enabling logging of Cloudflare headers
-  logs:
-    access:
-      enabled: true
-      format: json
-      fields:
-        general:
-          defaultmode: drop
-          names:
-            ClientHost: keep
-            DownstreamStatus: keep
-            DownstreamContentSize: keep
-            RequestMethod: keep
-            RequestPath: keep
-            RequestHost: keep
-            time: keep
-        headers:
-          defaultmode: drop
-          names:
-            Cf-Access-Authenticated-User-Email: keep
-            cf-cert-subject-dn: keep
-            User-Agent: keep
+  accessLog:
+    enabled: true
+    format: json
+    fields:
+      defaultMode: drop
+      names:
+        ClientHost: keep
+        DownstreamStatus: keep
+        DownstreamContentSize: keep
+        RequestMethod: keep
+        RequestPath: keep
+        RequestHost: keep
+        time: keep
+      headers:
+        defaultMode: drop
+        names:
+          Cf-Access-Authenticated-User-Email: keep
+          cf-cert-subject-dn: keep
+          User-Agent: keep
   # Trust x-forwarded headers from cloudflared and configure hostPort
   ports:
     web:
