@@ -18,6 +18,9 @@ updates:
      interval: daily
    commit-message:
      prefix: "chore(docker)"
+   # Works for docker.io, but not for ghcr.io (adds a warning into PR)
+   cooldown:
+     default-days: 7
  - package-ecosystem: helm
    directories: 
      - /*
@@ -28,3 +31,6 @@ updates:
      interval: daily
    commit-message:
      prefix: "chore(helm)"
+   # Works for OCI charts (inc. ghcr.io) but not HTTP helm chart repositories (PR will have no warning)
+   cooldown:
+     default-days: 7

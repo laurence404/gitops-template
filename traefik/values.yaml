@@ -55,13 +55,15 @@ traefik:
   securityContext:
     seccompProfile:
       type: RuntimeDefault
-  # Don't use LoadBalancer as using hostPort, use a ClusterIP accessible to cloudflared
+  # The below (and the hostPort lines above) are a bit a hack for a single node cluster
   service:
-    type: ClusterIP
+    spec:
+      # We're using hostPort, so don't need a LoadBalancer. cloudflared will connect to the ClusterIP
+      type: ClusterIP
   # Run 1 traefik pod on each node using DaemonSet
-  # due to hostPort must remove the old old before deploying new
   deployment:
     kind: DaemonSet
+  # due to hostPort must remove the old pod before deploying new
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 1

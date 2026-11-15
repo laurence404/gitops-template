@@ -13,8 +13,10 @@ data:
     # recommend using autoupdate.
     no-autoupdate: true
     # The `ingress` block tells cloudflared which local service to route incoming
-    # requests to. For more about ingress rules, see
+    # requests to. For more about ingress rules, see:
     # https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/do-more-with-tunnels/local-management/configuration-file/
+    # https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/routing-to-tunnel/protocols/
+    # https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/configure-tunnels/cloudflared-parameters/origin-parameters/
     ingress:
     - hostname: hello.{{ .Values.domain }}
       service: hello_world

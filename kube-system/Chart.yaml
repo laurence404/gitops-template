@@ -4,4 +4,4 @@ version: 0.1.0
 dependencies:
   - name: cilium
     version: 1.19.5
-    repository: https://helm.cilium.io/
+    repository: oci://quay.io/cilium/charts
