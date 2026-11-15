@@ -1,0 +1,65 @@
+name: Dependabot auto-merge
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v6
+
+      - name: Check eligibility
+        id: check
+        env:
+          NAMES: ${{ steps.metadata.outputs.dependency-names }}
+          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
+          # Dependencies that might be too risky to auto-update, space separated
+          BLOCKED: "local-path-provisioner"
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ok=true
+          [[ "$UPDATE_TYPE" == "version-update:semver-patch" || "$UPDATE_TYPE" == "version-update:semver-minor" ]] || ok=false
+          for name in ${NAMES//,/ }; do
+            [[ " $BLOCKED " == *" $name "* ]] && ok=false
+          done
+
+          # Skip if Dependabot says it couldn't apply the cooldown.
+          # If the PR text can't be fetched, fail closed.
+          if text=$(gh pr view "$PR_URL" --json body,comments \
+                      --jq '[.body, (.comments[].body)] | join("\n")'); then
+            grep -qi "cooldown could not be applied" <<< "$text" && ok=false
+          else
+            ok=false
+          fi
+
+          # Helm: skip if any changed Chart.yaml has an http(s) repository
+          # because dependabot doesn't support cooldown, but doesn't warn
+          # If a chart can't be parsed, fail closed.
+          mapfile -t charts < <(gh pr diff "$PR_URL" --name-only | grep -E '(^|/)Chart\.yaml$' || true)
+          for chart in "${charts[@]}"; do
+            if repos=$(yq -r '.dependencies[]?.repository // ""' "$chart"); then
+              grep -qE '^https?://' <<< "$repos" && ok=false
+            else
+              ok=false
+            fi
+          done
+
+          echo "ok=$ok" >> "$GITHUB_OUTPUT"
+
+      - name: Merge
+        if: steps.check.outputs.ok == 'true'
+        run: gh pr merge --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
