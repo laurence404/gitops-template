@@ -24,7 +24,8 @@ jobs:
           NAMES: ${{ steps.metadata.outputs.dependency-names }}
           UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
           # Dependencies that might be too risky to auto-update, or don't respect semver, space separated
-          BLOCKED: "local-path-provisioner cilium"
+          # Will need to exclude helm charts that do pre-releases, due to https://github.com/dependabot/dependabot-core/pull/15739
+          BLOCKED: "local-path-provisioner cilium cert-manager"
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
